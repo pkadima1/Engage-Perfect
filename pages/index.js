@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { saveToFirebase } from '@/lib/firebaseUtils';
 
 import { 
   Sparkles, 
@@ -12,6 +13,7 @@ import {
 } from 'lucide-react';
 import { getLinkedInShareUrl, getFacebookShareUrl, getTwitterShareUrl } from '../src/config/social';
 
+import ResultsDashboard from '../components/ResultsDashboard';
 
 export default function Home() {
   // States for both forms
@@ -32,6 +34,8 @@ export default function Home() {
   const [selectedIdeaIndex, setSelectedIdeaIndex] = useState(null);
   const [parsedIdeas, setParsedIdeas] = useState([]);
   const [isCopied, setIsCopied] = useState(false);
+  const [dateFilter, setDateFilter] = useState('all'); // 'all' will be the default value
+
 
   // Goals configuration
   const goals = [
@@ -262,9 +266,14 @@ const SelectionCard = ({ item, selected, onClick }) => (
   const handleIdeaSelection = (index) => {
     setSelectedIdeaIndex(index);
     const selectedIdea = parsedIdeas[index];
+     // Only save the selected idea to Firebase
+    saveToFirebase('idea', `[Title] ${selectedIdea.title}\n[Visual Content] ${selectedIdea.visual}\n[Caption] ${selectedIdea.caption}\n[Call to Action] ${selectedIdea.cta}`);
+    
     setSelectedIdea(`${selectedIdea.title}\n${selectedIdea.visual}\n${selectedIdea.caption}\n${selectedIdea.cta}`);
     setCaptionPlatform(formData.platform);
     setCaptionTone(formData.tone);
+    
+
     
     const captionGenerator = document.getElementById('caption-generator');
     if (captionGenerator) {
@@ -381,6 +390,19 @@ const SelectionCard = ({ item, selected, onClick }) => (
             Generate engaging social media content ideas tailored to your niche
           </p>
         </div>
+        
+        
+  // Add this dropdown above your content
+<select
+  value={dateFilter}
+  onChange={(e) => setDateFilter(e.target.value)}
+  className="mb-4 p-2 border rounded"
+>
+  <option value="all">All Time</option>
+  <option value="today">Today</option>
+  <option value="week">This Week</option>
+  <option value="month">This Month</option>
+</select>
 
         {/* Weekly Usage */}
         <div className="flex items-center gap-2 text-green-600 mb-8">
@@ -517,6 +539,26 @@ const SelectionCard = ({ item, selected, onClick }) => (
                     ← Back to all ideas
                   </button>
                 )}
+                // Then add this button in your content display
+<div className="flex justify-end mt-2">
+  <button
+    onClick={() => copyToClipboard(item.content)}
+    className="text-blue-500 hover:text-blue-700 text-sm"
+  >
+    Copy 📋
+  </button>
+</div>
+
+
+// Add delete button next to copy
+<button
+  onClick={() => deleteItem(item.id)}
+  className="text-red-500 hover:text-red-700 text-sm ml-2"
+>
+  Delete 🗑️
+</button>
+
+
               </div>
             </div>
           )}
@@ -686,6 +728,13 @@ const SelectionCard = ({ item, selected, onClick }) => (
             </div>
           </div>
         </div>
+        
+        <ResultsDashboard 
+  generatedIdeas={generatedIdeas}
+  generatedCaption={generatedCaption}
+  formData={formData}
+/>
+
       </main>
     </div>
   );

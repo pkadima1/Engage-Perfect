@@ -1,8 +1,4 @@
-// First, install Firebase:
-// npm install firebase
-
-// Create a new file: src/config/firebase.js
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getAnalytics } from "firebase/analytics";
@@ -17,6 +13,18 @@ const firebaseConfig = {
     measurementId: "G-K8NFQDM2ZF"
 };
 
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase only if it hasn't been initialized already
+let app;
+if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+    // Only initialize analytics in the browser
+    if (typeof window !== 'undefined') {
+        const analytics = getAnalytics(app);
+    }
+} else {
+    app = getApps()[0];
+}
+
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+export default app;
