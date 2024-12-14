@@ -23,37 +23,17 @@ export const socialConfig = {
   };
   
   // LinkedIn Share URL Generator
-  export const getLinkedInShareUrl = (text, url = 'https://engperf.ai') => {
-    const params = new URLSearchParams({
-      url: url,
-      summary: text,
-      source: 'EngagePerfect AI',
-      mini: 'true'
-    }).toString();
-  
-    return `https://www.linkedin.com/sharing/share-offsite/?${params}`;
+  export const getLinkedInShareUrl = (url, text) => {
+    return `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&summary=${encodeURIComponent(text)}`;
   };
-  
   // Facebook Share URL Generator
-  export const getFacebookShareUrl = (text, url = 'https://engperf.ai') => {
-    const params = new URLSearchParams({
-      app_id: socialConfig.facebook.appId,
-      quote: text,
-      href: url,
-      display: 'popup'
-    }).toString();
   
-    return `https://www.facebook.com/dialog/share?${params}`;
-  };
-  
+export const getFacebookShareUrl = (url, text) => {
+  return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`;
+}
   // Twitter Share URL Generator
   export const getTwitterShareUrl = (text) => {
-    const params = new URLSearchParams({
-      text: text,
-      url: 'https://engperf.ai'  // Optional: your website URL
-    }).toString();
-  
-    return `https://twitter.com/intent/tweet?${params}`;
+    return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
   };
   
   // General Social Share Helper

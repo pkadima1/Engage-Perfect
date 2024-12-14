@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '@/lib/firebase';
+import { db } from 'lib/firebase';
 import { collection, query, orderBy, limit, getDocs, addDoc } from 'firebase/firestore';
 import { Sparkles, Hash, MessageCircle, Calendar } from 'lucide-react';
 
